@@ -18,9 +18,12 @@ int main( int argc, char *argv[] )
   int np = NUM2SPAWN;
   char message[BUFSIZE];
   MPI_Comm parentcomm, spawnedcomm, allcomm;
+  char name[MPI_MAX_PROCESSOR_NAME];
+  int len;
   
   /* the usual start-up for any process */
   MPI_Init( &argc, &argv );
+  MPI_Get_processor_name(name, &len);
 
   /* This function provides a convenient way to determine whether
   ** this process is part of the original communicator (has a null
@@ -37,14 +40,14 @@ int main( int argc, char *argv[] )
     /* get the process rank, in this case within the parent communicator */
     MPI_Comm_rank(MPI_COMM_WORLD,&rank);
     MPI_Comm_size(MPI_COMM_WORLD,&size);
-    printf("rank %d (of %d) in the parent intra-communicator.\n",rank,size);
+    printf("rank %d (of %d) in the parent intra-communicator (host: %s).\n",rank,size,name);
   }
   else {
     /* notice that the spawned processes have an intra-communicator
     ** called MPI_COMM_WORLD, too */
     MPI_Comm_rank(MPI_COMM_WORLD,&rank);
     MPI_Comm_size(MPI_COMM_WORLD,&size);
-    printf("rank %d (of %d) in the spawned intra-communicator.\n",rank,size);
+    printf("rank %d (of %d) in the spawned intra-communicator (host: %s).\n",rank,size,name);
   }
 
   /* we can broadcast to all processes associated with an
